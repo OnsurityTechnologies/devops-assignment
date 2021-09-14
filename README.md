@@ -106,7 +106,7 @@ The Prometheus instance should be accessible at http://localhost:9090, and it sh
 Once you have pushed your progress,
 
 - Add `devops-infra-onsurity` as collaborators to the repository.
-- Reply to the email with link to your repository / send an email to `hr [at] onsurity [dot] com`.
+- Reply to the email with link to your repository / send an email to `Deepshikha [at] onsurity [dot] com`.
 
 ---
 
