@@ -1,38 +1,29 @@
-name: Commit Message Check
+name: PR Title Check
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-  push:
-    branches: [main, master, develop]  # adjust as needed
+    types: [opened, synchronize, reopened, edited]
 
 jobs:
-  check-commit-message:
+  check-pr-title:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check commit messages
-        uses: actions/github-script@v7
+      - name: Validate PR Title Format
+        uses: gsactions/commit-message-checker@v1
         with:
-          script: |
-            const messages = context.payload.commits.map(c => c.message);
-            
-            // Change this regex as per your exact requirement
-            const pattern = /^JIRA-[0-9]+[:\s]/;  // Allows "JIRA-123:" or "JIRA-123 "
-            
-            // Or stricter: require colon and space + description
-            // const pattern = /^JIRA-[0-9]+:\s+.+/;  
-            
-            const invalid = messages.filter(msg => !pattern.test(msg));
-            
-            if (invalid.length > 0) {
-              console.log('❌ Invalid commit messages found:');
-              invalid.forEach(msg => console.log(`   - ${msg}`));
-              core.setFailed(
-                `All commit messages must start with JIRA-<number>: followed by a description.\n` +
-                `Examples:\n` +
-                `   JIRA-123: Fix navigation bug\n` +
-                `   JIRA-456: Update dependencies`
-              );
-            } else {
-              console.log('✅ All commit messages follow the JIRA pattern');
-            }
+          pattern: '^\[JIRA-[0-9]+\]:\s+.+'
+          example: '[JIRA-123]: Fix user login issue'
+          error: |
+            ❌ PR title does NOT follow required format.
+
+            Required format:
+            [JIRA-123]: Description
+
+            Examples:
+            • [JIRA-101]: Add login API
+            • [JIRA-202]: Update onboarding flow
+          checkAllCommitMessages: false
+          excludeDescription: true
+          excludeTitle: false
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
