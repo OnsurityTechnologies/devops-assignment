@@ -1,0 +1,38 @@
+name: Commit Message Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, master, develop]  # adjust as needed
+
+jobs:
+  check-commit-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit messages
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const messages = context.payload.commits.map(c => c.message);
+            
+            // Change this regex as per your exact requirement
+            const pattern = /^JIRA-[0-9]+[:\s]/;  // Allows "JIRA-123:" or "JIRA-123 "
+            
+            // Or stricter: require colon and space + description
+            // const pattern = /^JIRA-[0-9]+:\s+.+/;  
+            
+            const invalid = messages.filter(msg => !pattern.test(msg));
+            
+            if (invalid.length > 0) {
+              console.log('❌ Invalid commit messages found:');
+              invalid.forEach(msg => console.log(`   - ${msg}`));
+              core.setFailed(
+                `All commit messages must start with JIRA-<number>: followed by a description.\n` +
+                `Examples:\n` +
+                `   JIRA-123: Fix navigation bug\n` +
+                `   JIRA-456: Update dependencies`
+              );
+            } else {
+              console.log('✅ All commit messages follow the JIRA pattern');
+            }
