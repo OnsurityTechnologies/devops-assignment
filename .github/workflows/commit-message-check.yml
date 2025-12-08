@@ -12,19 +12,17 @@ jobs:
       - name: Validate PR Title Format
         uses: gsactions/commit-message-checker@v1
         with:
-          pattern: '^\[JIRA-[0-9]+\]:\s*.+$'
+          pattern: '^\[JIRA-[0-9]+\]:\s+.+'
           example: '[JIRA-123]: Fix user login issue'
           error: |
             ❌ PR title does NOT follow required format.
 
             Required format:
-            [JIRA-123]:Description
             [JIRA-123]: Description
 
             Examples:
-            • [JIRA-101]:Fix login API
+            • [JIRA-101]: Add login API
             • [JIRA-202]: Update onboarding flow
-
           checkAllCommitMessages: false
           excludeDescription: true
           excludeTitle: false
